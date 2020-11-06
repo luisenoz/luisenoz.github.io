@@ -65,13 +65,25 @@ Hint: = is not a valid operator. Did you mean == ?.
 ```python
 key = os.environ.get('AZURE_SEARCH_KEY', '##############################')
 ```
+4. With the key saved, we can start using the function *search_images_bing*. This function is provided within utils class included with the notebooks online.  
+*At any time, if you’re not sure where a function is defined, you can just type it in the notebook to find out:*
 
+```python
+search_images_bing
+<function fastbook.search_images_bing(key, term, min_sz=128)>
+```
 
+5. Now, using the *searc_image_bing* function, Ill try to download the URLs of Great Barrier Reef images, or wahtever Bing Image Search finds for that search term:
+```python
+results = search_images_bing(key, 'great barrier reef')
+ims = results.attrgot('content_url')
+len(ims)
+```
 
+And needless to say, the result was: **ErrorResponseException: Operation returned an invalid status code 'PermissionDenied'**.  
 
-
-
-
+For what I learnt from the forum and other searchs in Google, the problem was orginated in changes to internal links by Microsoft that made all previos codes invalid.  
+I spent half a day searching for a solution, tried a few but haven't had any success. I need a break now and hope to find something to break this big roadblock tomorrow.
 
 
 
