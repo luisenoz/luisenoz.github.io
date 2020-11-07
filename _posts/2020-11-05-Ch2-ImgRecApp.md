@@ -98,29 +98,42 @@ def search_images_bing(key, term, max_images: int = 100, **kwargs):
      response.raise_for_status()
      search_results = response.json()    
      return L(search_results['value'])
-     ```
+ ```
  - In the following cell, maintain the same original code, but change ('content_url') for ('contentUrl') as here:
  ```python
  results = search_images_bing(key, 'great barrier reef')
 ims = results.attrgot('contentUrl')
-len(ims)```
+len(ims)
+```
 
 - You should get a number 100 when running it. That means we successfully downloaded the URLs of 100 images that Bing Image Search found for our search term.
 
-6. At the moment, I have a variable, *ims* that contains the URLS of 100 imagens Bing Search relates to "great barrier reef". But what if I wanted to access and see the photos?  
-a. We need to have a folder created where we can download the images.
-  a1. Verify current directory: os.getcwd()
-  a2. You can use the original *images* directory, or create a new one for the new images: os.mkdir("myimages")
+6. At the moment, I have a variable, *ims* that contains the URLS of 100 imagens Bing Search relates to "great barrier reef". 
+But what if I wanted to access and see the photos?
+
+a. <ins>We need to have a folder created where we can download the images:</ins>
+
+  a1. Verify current directory: os.getcwd().
+  
+  a2. You can use the original *images* directory, or create a new one for the new images: os.mkdir("myimages").
+  
+  a3. We can check files and directories in our current position by running: os.listdir().
+  
   a3. We can check files and directories in our current position by running: os.listdir()
-  a4. Or we can find the location of a particular file or directory using: os.path.abspath("myimages")  
-b. We need a function that would download the photos (I started with only one, as a test) to the indicated folder:
+  
+  a4. Or we can find the location of a particular file or directory using: os.path.abspath("myimages").
+  
+  a5. We can check files and directories in our current position by running: os.listdir()
+  
+b. <ins>We need a function that would download the photos (I started with only one, as a test) to the indicated folder:</ins>
 ```python
 dest = 'myimages/gbr.jpg'
 download_url(ims[0], dest)
 ```
-The first line indicates the path to save the photo and the name and format of the file.
-The second uses what i believe is a fastai function *download_url* to precisely get the image in th first url in our ims variable and save into the predefined directory. 
-c. And another function to access the photo:
+The first line indicates the path to save the photo and the name and format of the file.  
+The second uses what i believe is a fastai function *download_url* to precisely get the image in th first url in our ims variable 
+and save into the predefined directory.  
+c. <ins>And another function to access the photo:</ins>
 ```python
 im = Image.open(dest)
 im.to_thumb(128,128)
