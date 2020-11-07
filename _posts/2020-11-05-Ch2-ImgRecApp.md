@@ -25,7 +25,7 @@ So, although it is difficult, at least to me, to reduce Australia to just a bunc
 while others could arguably be replaced by some places more popular or representative; but my intention is to develop and app that can identify some places in Australia,
 and the five selected are good enough for the objective. I'm not tryng to identify the top 5 place in OZ!
 
-## Working in the Notebbok:
+## Working in the Notebook:
 
 1. Created a new notebook (*In a shock of orgininality I named it "My Image Recognition App"*). But it wasn't the start I was waiting for!  
 
@@ -82,9 +82,50 @@ len(ims)
 
 And needless to say, the result was: **ErrorResponseException: Operation returned an invalid status code 'PermissionDenied'**.  
 
-For what I learnt from the forum and other searchs in Google, the problem was orginated in changes to internal links by Microsoft that made all previos codes invalid.  
 I spent half a day searching for a solution, tried a few but haven't had any success. I need a break now and hope to find something to break this big roadblock tomorrow.
+Wel, what. difference makes to stsrt afresh!  
+The problem was that the original *searh_image-bing* function developed by Jeremy and included in the book doesn't work anymore, due to the chnages that Microsost inserted to the links in Bing Search.
+Fortunately, just yesterday the user "retuso" put a redefined *searh_image-bing* function for all of us to use in the forum, and that function worked beautifully!!!
+Many thanks to all people colaborating in the forum, but specially to "retuso" in this particular ocassion.  
+Just in case, the whole process to make it work is as follows:
+- In a cell after the saved the key, insert the new redefined function from "retuso":
+```python
+def search_images_bing(key, term, max_images: int = 100, **kwargs):    
+     params = {'q':term, 'count':max_images}
+     headers = {"Ocp-Apim-Subscription-Key":key}
+     search_url = "https://api.bing.microsoft.com/v7.0/images/search"
+     response = requests.get(search_url, headers=headers, params=params)
+     response.raise_for_status()
+     search_results = response.json()    
+     return L(search_results['value'])
+     ```
+ - In the following cell, maintain the same original code, but change ('content_url') for ('contentUrl') as here:
+ ```python
+ results = search_images_bing(key, 'great barrier reef')
+ims = results.attrgot('contentUrl')
+len(ims)```
 
+- You should get a number 100 when running it. That means we successfully downloaded the URLs of 100 images that Bing Image Search found for our search term.
+
+6. At the moment, I have a variable, *ims* that contains the URLS of 100 imagens Bing Search relates to "great barrier reef". But what if I wanted to access and see the photos?  
+a. We need to have a folder created where we can download the images.
+  a1. Verify current directory: os.getcwd()
+  a2. You can use the original *images* directory, or create a new one for the new images: os.mkdir("myimages")
+  a3. We can check files and directories in our current position by running: os.listdir()
+  a4. Or we can find the location of a particular file or directory using: os.path.abspath("myimages")  
+b. We need a function that would download the photos (I started with only one, as a test) to the indicated folder:
+```python
+dest = 'myimages/gbr.jpg'
+download_url(ims[0], dest)
+```
+The first line indicates the path to save the photo and the name and format of the file.
+The second uses what i believe is a fastai function *download_url* to precisely get the image in th first url in our ims variable and save into the predefined directory. 
+c. And another function to access the photo:
+```python
+im = Image.open(dest)
+im.to_thumb(128,128)
+```
+**I'm not even going to try to explain the feeling when the tiny thumb with an image of the Great Baarrier Reef showed up on my notebook after running that cell!!!**
 
 
 
