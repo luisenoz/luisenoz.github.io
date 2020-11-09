@@ -140,5 +140,120 @@ im.to_thumb(128,128)
 ```
 **I'm not even going to try to explain the feeling when the tiny thumb with an image of the Great Baarrier Reef showed up on my notebook after running that cell!!!**
 
+7. Now we can use fastai’s *download_images* function to download all the URLs for each of our 5 search terms.  
+a. First, I'll put my images types in a variable (*oz_places*) and the I'll create a separate folder for them:
 
+```python
+aus_places = 'Great Barrier Reef','Sydney Opera House','Ayers Rock', 'The Twelve Apostles', 'Wave Rock'
+path = Path('aus')
+```
+
+b. Then, I'll download the pictures into their respective folders:
+
+```python
+if not path.exists():
+    path.mkdir()
+    for o in aus_places:
+        dest = (path/o)
+        dest.mkdir(exist_ok=True)
+        results = search_images_bing(key, f'{o}')
+        download_images(dest, urls=results.attrgot('contentUrl'))
+```
+
+c. And now, running the *get_image_files* I expect to find 100 pictures in each new directory:
+
+```python
+fns = get_image_files(path)
+fns
+```
+(#496) [Path('aus/Ayers Rock/00000035.jpg'),Path('aus/Ayers Rock/00000004.jpg'),Path('aus/Ayers Rock/00000066.png'),Path('aus/Ayers Rock/00000085.jpg'),Path('aus/Ayers Rock/00000074.jpg'),Path('aus/Ayers Rock/00000018.jpg'),Path('aus/Ayers Rock/00000062.jpg'),Path('aus/Ayers Rock/00000081.jpg'),Path('aus/Ayers Rock/00000025.jpg'),Path('aus/Ayers Rock/00000000.jpg')...]
+
+There were 496, instead of 500 images downloaded, but I'm more than happy with that at this satge.
+
+8. fastai offers a function *verify_images* to verify none of the images are corrupted, since that's common when downloading files from internet.
+
+```python
+failed = verify_images(fns)
+failed
+```
+(#6) [Path('aus/Ayers Rock/00000072.jpg'),Path('aus/Ayers Rock/00000052.jpg'),Path('aus/Sydney Opera House/00000074.jpg'),Path('aus/Sydney Opera House/00000064.jpg'),Path('aus/Sydney Opera House/00000092.jpg'),Path('aus/The Twelve Apostles/00000097.jpg')]
+
+And it was good I was able to check my files, becasue I had 6 corrupted files
+
+9. To remove all the failed images, we can use anaother fastai function, *unlink*. 
+jeremy explains that, like most fastai functions that return a collection, *verify_images* returns an object of type L, which includes the map method. 
+This calls the passed function on each element of the collection. 
+I Think i can grasp the idea behind that clarification, but I expect to learn more about that in future lessons.
+
+```python
+failed.map(Path.unlink)
+```
+> One thing to be aware of in this process: Models can reflect only the data used to train them. And the world is full of biased data, which ends up reflected in, for example, Bing Image Search. We need to think carefully about the types of data that we might expect to see in practice in our application, and check carefully to ensure that all these types are reflected in our model’s source data.
+
+## From Data to Dataloaders
+
+**DataLoaders** is a <ins>class</ins> that just stores whatever **DataLoader** <ins>objects</ins> we pass to it and makes them available as *train and valid*.  
+It’s important in fastai because it provides the data for our model.
+
+To turn our downloaded data into a DataLoaders object, we need to tell fastai at least four things: 
+1. What kinds of data we are working with  
+2. How to get the list of items  
+3. How to label these items  
+4. How to create the validation set
+
+So far we have seen a number of *factory methods* for particular combinations of these things, 
+which are convenient when you have an application and data structure that happen to fit into those predefined methods.  
+For when you don’t have those particular combinations, fastai has an extremely flexible system called the **data block API**.  
+Here is the datablock I defined for my Autsrlian places dataset:
+
+```python
+aus = DataBlock(
+    blocks=(ImageBlock, CategoryBlock), 
+    get_items=get_image_files, 
+    splitter=RandomSplitter(valid_pct=0.2, seed=42),
+    get_y=parent_label,
+    item_tfms=Resize(128))
+```
+
+First we provide a tuple specifying the types we want for the independent and dependent variables: *(images for x and Categories for y)*
+```python
+blocks=(ImageBlock, CategoryBlock)
+```
+Since our underlying items will be file paths, we have to tell fastai how to get a list of those files.  
+The *get_image_files* function takes a path, and returns a list of all of the images in that path (recursively, by default): 
+```python
+get_items=get_image_files
+```
+
+Often, datasets downloaded from internet will already have a validation set defined.  
+Sometimes this is done by placing the images for the training and validation sets into different folders.  
+Sometimes it is done by providing a CSV file in which each filename is listed along with which dataset it should be in.  
+There are many ways that this can be done, and fastai has the flexibility to manage this by using one of the predefined classes or by writing our own.  
+In this case, we want to split our training and validation sets randomly.  
+However, we would like to have the same training/validation split each time we run this notebook, so we fix the random seed.
+```python
+splitter=RandomSplitter(valid_pct=0.2, seed=42)
+```
+
+To tell fastai what function to call to create the labels *(y)* in our dataset, we use the *parent_label* function provided by fastai 
+that simply creates the label from the name of the folder a file is in.  
+Because we put each of our places images into folders based on the type of place, this is going to give us the labels that we need.
+```python
+get_y=parent_label
+```
+
+Our images are all different sizes, and this is a problem for deep learning.  
+To group them in a big array (usually called a tensor) that is going to go through our model, 
+they all need to be of the same size. So, we need to add a transform that will resize these images to the same size.  
+*Item transforms* are pieces of code that run on each individual item, (whether it be an image, category, or so forth).  
+fastai includes many predefined transforms; and we will use the *Resize* transform here and specify a size of 128 pixels:
+```python
+item_tfms=Resize(128)
+```
+
+So far, we created a *DataBlock object*. And that is only like a template for creating a DataLoaders.  
+We still need to tell fastai the actual source of our data — in this case, the path where the images can be found:
+```python
+dls = aus.dataloaders(path)
+```
 
