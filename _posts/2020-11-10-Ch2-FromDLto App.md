@@ -131,7 +131,7 @@ learn.fine_tune(4)
 ```
 And these are the results:  
 
-|epoch|train_loss|valid_loss|error_rate|time |
+
 |0	    |2.028729   |0.747316	|0.275510	|00:15|
 |-------|-----------|-----------|-----------|-----|
 |epoch	|train_loss	|valid_loss	|error_rate	|time |
@@ -148,3 +148,49 @@ interp = ClassificationInterpretation.from_learner(learn)
 interp.plot_confusion_matrix()
 ```
 
+![confmatx](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/Unknown.png)
+
+As you can see, there was only 1 error, where the model classified a picture of Ayers Rock as one of The Great Barrier Reef.  
+It’s helpful to see where exactly our errors are occurring, to see whether they’re due to a dataset problem 
+(e.g., images that aren’t any of our aus places at all, or are labeled incorrectly) or a model problem 
+(perhaps it isn’t handling images taken with unusual lighting, or from a different angle, etc.).  
+To do this, we can sort our images by their loss.  
+The loss is a number that is higher if the model is incorrect (especially if it’s also confident of its incorrect answer), 
+or if it’s correct but not confident of its correct answer.  
+The *plot_top_losses* function shows us the images with the highest loss in our dataset:
+```python
+interp.plot_top_losses(5, nrows=1)
+```
+The output shows that the image with the highest loss is one that has been predicted as “The Great Reef Barrier” with 67% confidence. 
+However, it’s labeled as “Ayers Rock”
+
+![highloss](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/Unknown-2.png)
+
+*What do you think? I'm sure it's not the Grea Reef Barrier, but I wouldn't bet on Ayers Rock either!*
+
+The intuitive approach to doing data cleaning is to do it before you train a model. But a model can help you find data issues more quickly and easily.  
+So, we normally prefer to train a quick and simple model first, and then use it to help us with data cleaning.
+Of course, fastai includes a handy GUI for data cleaning called *ImageClassifierCleaner* that allows you to choose a category 
+and the training versus validation set and view the highest-loss images (in order), 
+along with menus to allow images to be selected for removal or relabeling:
+```python
+cleaner = ImageClassifierCleaner(learn)
+cleaner
+```
+And then you can select any of my 5 places and see all photos one by one in the training and validation set, and relable or delete those that are incorrect.
+
+However, *ImageClassifierCleaner* doesn’t do the deleting or changing of labels for you; 
+it just returns the indices of items to change.  
+So, for instance, to delete (unlink) all images selected for deletion, we would run this: 
+```python
+for idx in cleaner.delete(): cleaner.fns[idx].unlink()
+```
+To move images for which we’ve selected a different category, we would run this: 
+```python
+for idx,cat in cleaner.change(): shutil.move(str(cleaner.fns[idx]), path/cat)
+```
+
+>Sylvain Says: Cleaning the data and getting it ready for your model are two of the biggest challenges for data scientists; 
+they say it takes 90% of their time. The fastai library aims to provide tools that make it as easy as possible.
+
+Once we’ve cleaned up our data, we can retrain our model.
