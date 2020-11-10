@@ -113,3 +113,38 @@ dls = aus.dataloaders(path)
 dls.train.show_batch(max_n=8, nrows=2, unique=True)
 ```
 
+## Training the model and using it to clear the data
+
+It's time to train the aus classifier.  
+We don't have a lot of data, so to train our model, we’ll use *RandomResizedCrop*, an image size of 224 pixels, which is fairly standard for image classification, and the default *aug_transforms*:
+```python
+aus = aus.new(
+    item_tfms=RandomResizedCrop(224, min_scale=0.5),
+    batch_tfms=aug_transforms())
+dls = aus.dataloaders(path)
+```
+
+We can now create our Learner and fine-tune it, as we did in Chapter 1:
+```python
+learn = cnn_learner(dls, resnet18, metrics=error_rate)
+learn.fine_tune(4)
+```
+And these are the results:  
+
+|epoch|train_loss|valid_loss|error_rate|time |
+|0	    |2.028729   |0.747316	|0.275510	|00:15|
+|-------|-----------|-----------|-----------|-----|
+|epoch	|train_loss	|valid_loss	|error_rate	|time |
+|0	    |0.264058	|0.162271	|0.040816	|00:15|
+|1	    |0.173743	|0.068755	|0.020408	|00:15|
+|2	    |0.118938	|0.038338	|0.010204	|00:16|
+|3	    |0.095285	|0.034595	|0.010204	|00:16|
+
+We trained the model in around 1 minute to an error rate of 1%!!! *(Of course I'm not going to highlight that the book's model showed a 1.6% error rate)*
+
+To visualise the types of errors the model is doing, we can create a ***Confusion Matrix***.  
+```python
+interp = ClassificationInterpretation.from_learner(learn)
+interp.plot_confusion_matrix()
+```
+
