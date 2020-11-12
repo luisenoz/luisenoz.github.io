@@ -1,4 +1,4 @@
-# From DataLoader to Application
+# From DataLoader to a Trained Model
 
 ## From Data to DataLoader
 **DataLoaders** is a <ins>class</ins> that just stores whatever **DataLoader** <ins>objects</ins> we pass to it and makes them available as *train and valid*.  
@@ -194,3 +194,7 @@ for idx,cat in cleaner.change(): shutil.move(str(cleaner.fns[idx]), path/cat)
 they say it takes 90% of their time. The fastai library aims to provide tools that make it as easy as possible.
 
 Once we’ve cleaned up our data, we can retrain our model.
+
+Now that we have trained the model, we need to see how to deploy it to be used in practice.  
+Given the extention of this post already, I think it'd be better to put the next steps into a new file.
+
