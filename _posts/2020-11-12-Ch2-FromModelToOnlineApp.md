@@ -87,7 +87,7 @@ out_pl.clear_output()
 with out_pl: display(img.to_thumb(128,128))
 out_pl
 ```
-5. Make preditions:
+5. Make predictions:
 ```python
 pred,pred_idx,probs = learn_inf.predict(img)
 ```
@@ -129,7 +129,7 @@ We have written all the code necessary for our app. The next step is to convert 
 
 We'll create a new notebook and copy to it only the code needed to create and show the widgets that you need, 
 and the Markdown cells for any text that you want to appear.
-The books offer a notebook called "bear classifier" that we can copy and update to our set of data, with minimun chnages.
+The books offers a notebook called "bear classifier" that we can copy and update to our set of data, with minimun changes.
 
 Next, we need to install Voilà by copying these lines into a notebook cell and executing it:
 ```python
@@ -141,7 +141,73 @@ The first line installs the voila library and application, and the second connec
 Voilà runs Jupyter notebooks just like the Jupyter notebook server we you are using, but it removes all of the cell inputs, 
 and shows only output (including ipywidgets), along with any Markdown cells. <ins>So what’s left is a web application!</ins>. 
 
-The book sys that to view the notebook as a Voilà web application, we need to replace the word “notebooks” in our browser’s URL with “voila/render”.  
+The book says that to view the notebook as a Voilà web application, we need to replace the word “notebooks” in our browser’s URL with “voila/render”.  
 However, I get an *404 : Not Found - You are requesting a page that does not exist!* message, instead of a Voila web app.  
-I'll look into it in th fastai forum.
+I looked into it in th fastai forum and found that you have to export your learning model to export.pkl file and download that file, along with the minimal version of the notebook and then to push all that plus the requirement.txt file into a new repository in github. Since it's a bit more complicated than what I thought, 
+I'll copy here a detailed process provided in the forum by member vikbehal:
+
+- Build the model and app notebook:
+1. Once the model is trained and the notebook is ready, create a duplicate of your working notebook but with minimal content. *(as I mentioned at the beginning of this topic, the books offers a notebook called "bear classifier" that we can copy and update to our set of data, with minimun changes)*.
+2. Once done, download the export.pkl file & the minimal version of your notebook created in step 1. *(In my case, I'm working with Paperspace Gradient but downloaded the files to a drive in my local machine)*.  
+*(<ins>Note:</ins>To download, just select the files from Github where you have them and click Download at the top of the list.)*
+
+- Setup repository in Github:
+1. Create a Github account if you don't have one.
+2. Create a new repository in Github.  
+<ins>Note:</ins> You can choose whatever name you like as Repository Name, the Type should be ‘Public’ and you can check ‘Initialize this repository with a README’ option. Finally, click on Create repository button to create it.
+3. Upload your model (the export.pkl file), the notebook and the requirements.txt file to this repository.  
+ **<ins>Note:</ins> Github won't upload any file lager than 25MBs, therefore, if your model (export.pkl) is larger than 25 MBs (which is very possible), you will need to use Git Large File Storage service to be able to upload it. You can do that by following the steps described here:**. 
+ 
+- You need to have Git installed locally in your machine.
+- Download and install *Git Large File Storage* [GLF](https://git-lfs.github.com/)
+- Next, create a new folder to hold your Github repository in one of your drives.
+- On your Terminal head over to the above-created folder by using “cd” command.
+- Next, clone your Github repository using “git clone (the URL of your repo)”.  
+*(in my case: git clone https://github.com/#######/Aus-Places-Classifier.git). 
+(you can get the url from the green CODE botton at the top of your repo)*.  
+<ins>Note:</ins> You may be prompted for username and password. If so, please provide your Github username and password.
+
+- Finally, run the below commands in same order to upload the large file.  
+Run it in the folder of the cloned Github repository that was created in your machine in the last point.  
+```
+git lfs install
+git lfs track "*.pkl"
+git add .gitattributes
+git add export.pkl
+git commit -m "Add model"
+git push -u origin main
+```
+- This should have uploaded your large model file to the Github repo. *(Good luck!).
+
+
+## Deploying the app
+
+We do not need a GPU to serve our model in production.
+GPUs are useful only when they do lots of identical work in parallel. But you’ll normally be classifying just one user’s image at a time. So, a CPU will often be more cost-effective.  
+Because of the complexity of GPU serving, many systems have sprung up to try to automate this. However, managing and running these systems is also complex, and generally requires compiling your model into a different form that’s specialized for that system. It’s typically preferable to avoid dealing with this complexity until/unless your app gets popular enough that it makes clear financial sense for you to do so.  
+For the initial prototype of your application, and for any hobby projects, you can easily host them for free.
+At the moment, the simplest (and free!) approach is to use Binder.  
+
+According to the book, to publish our web app on Binder, we need to follow these steps: 
+1. Add your notebook to a GitHub repository.  
+*(We did this already in our previous topic when followed the steps provided in the forum by member vikbehal)*.   
+We only need 3 files (+1 README.md that Github created when you created the new repo) to build this app:
+- export.pkl, 
+- *yournotebokkname*.ipynb 
+- and requirements.txt
+2. Paste the URL of that repo into Binder’s URL field. -As (1) in the image below-
+3. Change the File drop-down to instead select URL.  
+4. In the “URL to open” field, enter /voila/render/name.ipynb (replacing name with the name of your notebook). -As (2) in the image below-
+5. Click the clipboard button at the bottom right to copy the URL - as (3) in the image below - and paste it somewhere safe.  
+6. Click Launch.
+
+![BinderSetUp](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/binderlaunch.png)
+
+The first time you do this, Binder will take around 5 minutes to build your site.  
+Behind the scenes, it is finding a virtual machine that can run your app, allocating storage, and collecting the files needed for Jupyter, 
+for your notebook, and for presenting your notebook as a web application.  
+Finally, once it has started the app running, it will navigate your browser to your new web app.  
+You can share the URL you copied to allow others to access your app as well.
+
+
 
