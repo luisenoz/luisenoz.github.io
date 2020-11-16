@@ -187,7 +187,7 @@ git add export.pkl
 git commit -m "Add model"
 git push -u origin main
 ```
-- This should have uploaded your large model file to the Github repo. *(Good luck!).
+- This should have uploaded your large model file to the Github repo. *.
 
 
 ## Deploying the app
