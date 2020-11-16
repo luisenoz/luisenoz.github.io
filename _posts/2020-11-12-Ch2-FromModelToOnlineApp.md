@@ -141,9 +141,19 @@ The first line installs the voila library and application, and the second connec
 Voilà runs Jupyter notebooks just like the Jupyter notebook server we you are using, but it removes all of the cell inputs, 
 and shows only output (including ipywidgets), along with any Markdown cells. <ins>So what’s left is a web application!</ins>. 
 
-The book says that to view the notebook as a Voilà web application, we need to replace the word “notebooks” in our browser’s URL with “voila/render”.  
-However, I get an *404 : Not Found - You are requesting a page that does not exist!* message, instead of a Voila web app.  
-I looked into it in th fastai forum and found that you have to export your learning model to export.pkl file and download that file, along with the minimal version of the notebook and then to push all that plus the requirement.txt file into a new repository in github. Since it's a bit more complicated than what I thought, 
+The book says that to view the notebook as a Voilà web application, we need to replace the word “notebooks” in our browser’s URL with “voila/render”.   
+However, I initially got an *404 : Not Found - You are requesting a page that does not exist!* message, instead of a Voila web app.  
+I tried again by reinstalling Voila, and now I've got *inconsistent versions of Voila, nbdev and nbconvert packages*.
+
+Despite the error message, I have Voila installed (there is a Voila icon in the top menu), but when I try to run the notebook in Voila, I receive an error message:
+*ERROR: Voila 0.2.4 requires nbconvert<7, >=6, but you have nbconvert 6.0.7 which is incompatible.*. 
+Therefore, I’m in a situation where Voila requires nbconvert >=6 while at the same time nbdev requires the same nbconvert to be <6!
+
+I spent a week stuck with this issue and couldn't find a soltion in the forum or the web. I opened a new topic in fastai forum and I hope somebody would be able to help me.
+
+> I'd recomend not to continue with the next steps (deploying your model in Bing) until you tested that you can open you model as a Voila web application from the notebook first.
+
+Once you have Voila workiing in your notebook, you have to export your learning model to export.pkl file and download that file, along with the minimal version of the notebook and then push all that plus the requirement.txt file into a new repository in Github. Since it's a bit more complicated than what I thought, 
 I'll copy here a detailed process provided in the forum by member vikbehal:
 
 - Build the model and app notebook:
@@ -156,7 +166,7 @@ I'll copy here a detailed process provided in the forum by member vikbehal:
 2. Create a new repository in Github.  
 <ins>Note:</ins> You can choose whatever name you like as Repository Name, the Type should be ‘Public’ and you can check ‘Initialize this repository with a README’ option. Finally, click on Create repository button to create it.
 3. Upload your model (the export.pkl file), the notebook and the requirements.txt file to this repository.  
- **<ins>Note:</ins> Github won't upload any file lager than 25MBs, therefore, if your model (export.pkl) is larger than 25 MBs (which is very possible), you will need to use Git Large File Storage service to be able to upload it. You can do that by following the steps described here:**. 
+ **<ins>Note:</ins> Github won't upload any file lager than 25MBs, therefore, if your *export.pkl* is larger than 25 MBs (which is most likely true), you will need to use Git Large File Storage service to be able to upload it. You can do that by following the steps described here:**. 
  
 - You need to have Git installed locally in your machine.
 - Download and install *Git Large File Storage* [GLF](https://git-lfs.github.com/)
@@ -164,8 +174,8 @@ I'll copy here a detailed process provided in the forum by member vikbehal:
 - On your Terminal head over to the above-created folder by using “cd” command.
 - Next, clone your Github repository using “git clone (the URL of your repo)”.  
 *(in my case: git clone https://github.com/#######/Aus-Places-Classifier.git). 
-(you can get the url from the green CODE botton at the top of your repo)*.  
-<ins>Note:</ins> You may be prompted for username and password. If so, please provide your Github username and password.
+(you can get the url from the green CODE button at the top of your Github repo)*.  
+<ins>Note:</ins> You may be prompted for username and password.
 
 - Finally, run the below commands in same order to upload the large file.  
 Run it in the folder of the cloned Github repository that was created in your machine in the last point.  
