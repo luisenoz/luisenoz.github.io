@@ -223,3 +223,5 @@ You can share the URL you copied to allow others to access your app as well.
 
 > Since I couldn't make the notebbok run as a Voila web app, I haven't been able to test all this last part and deploy the app in Binder. But I promise you I'll do it some tiime in the future and I'll come back here to report my experience. *(I hope you have a much better luck!)*
 
+
+
