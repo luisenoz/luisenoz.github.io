@@ -151,7 +151,9 @@ Therefore, I’m in a situation where Voila requires nbconvert >=6 while at the 
 
 I spent a week stuck with this issue and couldn't find a soltion in the forum or the web. I opened a new topic in fastai forum and I hope somebody would be able to help me.
 
-> I'd recomend not to continue with the next steps (deploying your model in Bing) until you tested that you can open you model as a Voila web application from the notebook first.
+> **I'd recomend not to continue with the next steps (deploying your model in Bing) until you tested that you can open you model as a Voila web application from the notebook first.**   
+**I've tried multiple times, looked on the different libraires instructions and created a topice about my probelm in fastai forum, without any success.**    
+*I know it can sound a bit arrogant or selfish, but I felt the forum and the authors let me down with this issue. Not because they didn't provide a solution but becasue nodody replied anything to my topic after more than 2 weeks. I even added  second post asking for at least some references to documenation or other sites that could help me, and again no response. Sorry for venting here, but if I can't not do it in my blog, where could I do it!!!)*
 
 Once you have Voila workiing in your notebook, you have to export your learning model to export.pkl file and download that file, along with the minimal version of the notebook and then push all that plus the requirement.txt file into a new repository in Github. Since it's a bit more complicated than what I thought, 
 I'll copy here a detailed process provided in the forum by member vikbehal:
@@ -219,5 +221,5 @@ for your notebook, and for presenting your notebook as a web application.
 Finally, once it has started the app running, it will navigate your browser to your new web app.  
 You can share the URL you copied to allow others to access your app as well.
 
-
+> Since I couldn't make the notebbok run as a Voila web app, I haven't been able to test all this last part and deploy the app in Binder. But I promise you I'll do it some tiime in the future and I'll come back here to report my experience. *(I hope you have a much better luck!)*
 
