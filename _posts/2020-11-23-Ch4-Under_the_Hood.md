@@ -87,4 +87,14 @@ tensor([[  0,   0,   0,   0,   0,   0],
        [  0, 107, 253, 253, 230,  48],    
        [  0,   3,  20,  20,  15,   0]], dtype=torch.uint8).  
        
-
+We can slice the array to pick just the part with the top of the digit in it, and then use a Pandas DataFrame to color-code the values using a gradient, 
+which shows us clearly how the image is created from the pixel values:
+```python
+im3_t = tensor(im3)
+df = pd.DataFrame(im3_t[4:15,4:22])
+df.style.set_properties(**{'font-size':'6pt'}).background_gradient('Greys')
+```
+The background white pixels are stored as the number 0,   
+black is the number 255,     
+and shades of gray are between the two.    
+The entire image contains 28 pixels across and 28 pixels down, for a total of 784 pixels.
