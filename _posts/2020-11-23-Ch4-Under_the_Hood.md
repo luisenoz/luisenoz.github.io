@@ -98,3 +98,120 @@ The background white pixels are stored as the number 0,
 black is the number 255,     
 and shades of gray are between the two.    
 The entire image contains 28 pixels across and 28 pixels down, for a total of 784 pixels.
+
+So, now that we've seen what an image looks like to a computer, how can we go to achieve our goal of creating a model that can recognize 3s and 7s?   
+The authors ask us to stop and think our own solutiona before moving forward with their solution. **Learning works best when we try to solve problems by ourselves, rather than just reading somebody else’s answers**.
+
+## First try: Pixel similarity
+
+The book offers a first idea: 
+1. To find the average pixel value for every pixel of the 3s, then do the same for the 7s. 
+2. That will give us two group averages, defining what we might call the “ideal” 3 and 7. 
+3. Then, to classify an image as one digit or the other, we see which of these two ideal digits the image is most similar to.    
+This certainly seems like it should be better than nothing, so it will make a good *baseline*.
+
+> Jargon: **baseline** = A simple model that we're confident will perform resonably well, it's simple to implement and easy to test. Without a baseline model to compare, it's not going to be easy to detrmine if future super more sofisticated models are actually performing better than reasonably.   
+Another good approach is to search around to find other people who have solved problems similar to ours, and download and run their code on our dataset.
+
+<ins>Step I:</ins> Get the average of pixel values for each of our two groups.   
+To create a tensor containing all the images in a directory, we will use a Python list comprehension to create a plain list of the single image tensors.   
+We then check that the number of returned items seems reasonable.
+```python
+seven_tensors = [tensor(Image.open(o)) for o in sevens]
+three_tensors = [tensor(Image.open(o)) for o in threes]
+len(three_tensors),len(seven_tensors)
+```
+(6131, 6265)
+
+*****
+> **List Comprehesion** are a powerful tool from Python, used extensively in many areas. Following is an example given in the book:    
+
+```python
+new_list = [f(o) for o in a_list if o>0]
+```
+This will return every element of a_list that is greater than 0, after passing it to the function f.    
+It’s not only shorter to write, but also way faster than the alternative ways of creating the same list with a loop.
+*****
+
+We can also check that one of the images looks OK.    
+Since we now have tensors (which Jupyter by default will print as values), rather than PIL images (which Jupyter by default will display images), 
+we need to use fastai’s *show_image* function to display it:
+```python
+show_image(three_tensors[1])
+```
+We should get a good image of the digit 3.
+
+For every pixel position, we need to calculate the average over all images of the intensity of that pixel.   
+We first combine all the images in the list into a single 3 dimensional tensor *(a rank-3 tensor)*.   
+Pytorch has the fucntion called *stack* that we can use to do exactly that.    
+Some operations in PyTorch, such as taking a mean, require us to *cast* our integer types to float types. 
+Since we’ll be needing this later, we’ll also *cast* our stacked tensor to float now.    
+*Casting* in PyTorch is as simple as writing the name of the type we wish to *cast* to, *(in this case float)* and treating it as a method.    
+Finally, when images are floats, the pixel values are expected to be between 0 and 1, so we will also need to divide by 255 here, *(becasue the pixels' intensity goes from 0 to 255)*.
+```python
+stacked_sevens = torch.stack(seven_tensors).float()/255
+stacked_threes = torch.stack(three_tensors).float()/255
+stacked_threes.shape
+```
+torch.Size([6131, 28, 28])
+
+The more important attribute of a tensor is its *shape*, that will tell us the lenght of each axis: here of 6131 images of 28 x 28 pixels.    
+The *lenght* of a tensor is its *rank*, here of 3 dimensions.
+```python
+len(stacked_threes.shape)
+```
+3
+
+We can also get a tensor’s rank directly with *ndim*:
+```python
+stacked_threes.ndim
+```
+3
+
+Finally, we can compute our ideal 3 by taking the mean of all images along dimension 0 of the stacked rank-3 tensor. 
+0 is the dimension that indexes through all images.   
+For every pixel position, this will compute the average of that pixel over all images. 
+The result will be one value for every pixel position, or a single image.
+```python
+mean3 = stacked_threes.mean(0)
+show_image(mean3);
+```
+The ideal 3 will be very dark where all images agree and wispy and blurry where the images disagree.   
+
+<ins>Step II:</ins> We can now pick an arbitrary 3 or 7 and meassure their *distance* from the *ideal* ones.   
+- Selecting a 3 digit:
+```python
+a_3 = stacked_threes[1]
+show_image(a_3);
+```
+
+Data scientists use two main ways to measure distance in this context: 
+1. **Mean absolute difference or L1 norm**: the mean of the absolute value of differences (absolute value is the function that replaces negative values with positive values). 
+2. **Root mean squared error (RMSE) or L2 norm**: the mean of the square of differences (which makes everything positive) and then take the square root (which undoes the squaring).
+
+```python
+dist_3_abs = (a_3 - mean3).abs().mean()
+dist_3_sqr = ((a_3 - mean3)**2).mean().sqrt()
+dist_3_abs,dist_3_sqr
+```
+(tensor(0.1114), tensor(0.2021))
+
+```python
+dist_7_abs = (a_3 - mean7).abs().mean()
+dist_7_sqr = ((a_3 - mean7)**2).mean().sqrt()
+dist_7_abs,dist_7_sqr
+```
+(tensor(0.1586), tensor(0.3021))
+
+In both cases, the distance between our 3 and the “ideal” 3 is less than the distance to the ideal 7, 
+so our simple model will give the right prediction in this case.
+
+*PyTorch already provides both of these as loss functions. We can find these inside torch.nn.functional, which the PyTorch team recommends importing as F (and is available by default under that name in fastai):*
+
+```python
+F.l1_loss(a_3.float(),mean7), F.mse_loss(a_3,mean7).sqrt()
+```
+(tensor(0.1586), tensor(0.3021))
+
+After so many calculations, the book moves to show us the characteristics and differences of two important mathematical structures: *NumPy arrays* and *PyTorch tensors*.   
+Let's see that in the next post.
