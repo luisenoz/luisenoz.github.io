@@ -161,4 +161,22 @@ For the example, we stopped after 10 epochs, but in practice, we would watch the
 
 # Summarizing Gradient Descent
 
+![GD7Steps](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/dlcf_0401.png)
+
+1. At the beginning, the weights of our model can be random *(training from scratch)* or come from a pretrained model *(transfer learning)*.     
+In any case, the model will need to learn better weights.     
+2. We begin by comparing the outputs the model gives us with our targets *(we have labeled data, so we know what result the model should give)*. We use a loss function, which returns a number that we want to make as low as possible by improving our weights.     
+The score we get tells us how wrong our predictions were.     
+3. We then change the weights a little bit to make it slightly better.     
+4. To find how to change the weights to make the loss a bit better, we use calculus to calculate the gradients, *(actually PyTorch calculates those for us)*.
+
+> Let’s consider an analogy. Imagine you are lost in the mountains with your car parked at the lowest point. 
+To find your way back to it, you might wander in a random direction, but that probably wouldn’t help much. 
+Since you know your vehicle is at the lowest point, you would be better off going downhill. 
+By always taking a step in the direction of the steepest downward slope, you should eventually arrive at your destination.
+
+5. We use the magnitude of the gradient *(i.e., the steepness of the slope)* to tell us how big a step to take. 
+We multiply the gradient by a number we choose called the *learning rate* to decide on the step size.     
+6. We then iterate until we have reached the lowest point, which will be our *parking lot*.     
+7. Then we can stop.
 
