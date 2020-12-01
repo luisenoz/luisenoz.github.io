@@ -161,5 +161,4 @@ For the example, we stopped after 10 epochs, but in practice, we would watch the
 
 # Summarizing Gradient Descent
 
-![GDProcess](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.oreilly.com%2Flibrary%2Fview%2Fdeep-learning-for%2F9781492045519%2Fch04.html&psig=AOvVaw0CPD5bd2tsI5c6me81JXO-&ust=1606906103634000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCKjzof_NrO0CFQAAAAAdAAAAABAD)
 
