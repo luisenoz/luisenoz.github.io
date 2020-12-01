@@ -139,7 +139,7 @@ for i in range(10): apply_step(params)
 669.666259765625.    
 669.3082885742188.    
 669.2379150390625.    
-669.2215576171875. 
+669.2215576171875.    
 669.2156372070312. 
 
 The loss is going down, just as expected. However, looking only at these loss numbers 
@@ -154,4 +154,12 @@ for ax in axs: show_preds(apply_step(params, False), ax)
 plt.tight_layout()
 ```
 
+![FunctionApproachBest](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/QuadrCurveShapes.png)
+
+## Step 7: Stop
+For the example, we stopped after 10 epochs, but in practice, we would watch the training and validation losses and our metrics to decide when to stop.
+
+# Summarizing Gradient Descent
+
+![GDProcess](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.oreilly.com%2Flibrary%2Fview%2Fdeep-learning-for%2F9781492045519%2Fch04.html&psig=AOvVaw0CPD5bd2tsI5c6me81JXO-&ust=1606906103634000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCKjzof_NrO0CFQAAAAAdAAAAABAD)
 
