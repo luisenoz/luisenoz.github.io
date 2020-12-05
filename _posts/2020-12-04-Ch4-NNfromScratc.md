@@ -192,9 +192,80 @@ It’s defined as follows:
 def sigmoid(x): 
   return 1/(1+torch.exp(-x))
 ```
-But PyTorch defines an accelerated version for us, so we don’t really need our own.
+PyTorch defines an accelerated version for us, so we don’t really need our own.
 
+![sigmoid](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/Sigmoid.jpg)
 
+As we can see, it takes any input value, positive or negative, and smooshes it into an output value between 0 and 1.     
+It’s also a smooth curve that only goes up, which makes it easier for SGD to find meaningful gradients.
 
+We can now update *mnist_lost* to aply *signmoid* to the inputs, and so be sure they'll always be between 0 and 1:
+```python
+def mnist_loss(predictions, targets):
+    predictions = predictions.sigmoid()
+    return torch.where(targets==1, 1-predictions, predictions).mean()
+```
+___
+Now is a good time to recapitulate and think about why we defined a *loss fuction* when we already had *metric* as an overall meassure of accuracy.     
+The key difference is:     
+- **metric** is to help our human understanding,
+- **loss** is to drive automatic learning by the model.
+To drive automated learning, the loss must be a function that has a meaningful derivative.     
+It can’t have big flat sections and large jumps, but instead must be reasonably smooth.     
+This is why we designed a loss function that would respond to small changes in confidence level.
+___
+
+### SGD and Minibatches
+
+The next phase of the learning process, which is to update the weights based on the gradients is called an *optimization step*.     
+To take an optimization step, we need to calculate the loss over one or more data items.     
+- We could calculate it for the whole dataset and take the average, 
+- or we could calculate it for a single data item.     
+Calculating it for the whole dataset would take a long time.     
+Calculating it for a single item would not use much information, so it would result in an imprecise and unstable gradient.     
+
+So instead we compromise: we calculate the average loss for a few data items at a time. This is called a ***mini-batch***.
+And the number of data items included in the moni-batch is called *batch size*.
+
+> Choosing a good batch size is one of the decisions we'll need to make as a deep learning practitioner to train your model quickly and accurately.
+
+As we saw in our discussion of data augmentation, we get better generalization if we can vary things during training.     
+One simple and effective thing we can vary is what data items we put in each mini-batch. 
+Rather than simply enumerating our dataset in order for every epoch, instead what we normally do is randomly shuffle it on every epoch, before we create mini-batches.     
+PyTorch and fastai provide a class that will do the shuffling and mini-batch collation for us, called **DataLoader**.
+
+We can see a Dataloader at work in the following simple example, where it took a collection of 15 numbers and allocated them randomly in 3 btaches of size 5:
+```python
+coll = range(15)
+dl = DataLoader(coll, batch_size=5, shuffle=True)
+list(dl)
+```
+[tensor([ 3, 12,  8, 10,  2]),     
+ tensor([ 9,  4,  7, 14,  5]),     
+ tensor([ 1, 13,  0,  6, 11])]     
+ 
+For training a model, we need a collection containing independent and dependent variables (the inputs and targets of the model).     
+A collection that contains tuples of independent and dependent variables is known in PyTorch as a **Dataset**.     
+Here’s an example of an extremely simple Dataset:
+```python
+ds = L(enumerate(string.ascii_lowercase))
+ds
+```
+(#26) [(0, 'a'),(1, 'b'),(2, 'c'),(3, 'd'),(4, 'e'),(5, 'f'),(6, 'g'),(7, 'h'),(8, 'i'),(9, 'j')...].    
+
+Then, when we pass a Dataset to a DataLoader we will get back many batches that are themselves tuples of tensors representing batches of independent and dependent variables:
+```python
+dl = DataLoader(ds, batch_size=6, shuffle=True)
+list(dl)
+```
+[(tensor([17, 18, 10, 22,  8, 14]), ('r', 's', 'k', 'w', 'i', 'o')),     
+ (tensor([20, 15,  9, 13, 21, 12]), ('u', 'p', 'j', 'n', 'v', 'm')),     
+  (tensor([ 7, 25,  6,  5, 11, 23]), ('h', 'z', 'g', 'f', 'l', 'x')),     
+  (tensor([ 1,  3,  0, 24, 19, 16]), ('b', 'd', 'a', 'y', 't', 'q')),     
+  (tensor([2, 4]), ('c', 'e'))].    
+  
+  ## Putting in All Together
+  
+  
 
   
