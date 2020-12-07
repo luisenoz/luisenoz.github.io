@@ -383,3 +383,44 @@ We already have the foundational pieces, but there are just a few little tricks 
 *(Of course, even if we know all the tricks, we’ll nearly always want to work with the prebuilt classes provided by PyTorch and fastai, 
 because they'll save us from having to think about all the little details ourself.)*
 
+## Jargon:
+
+A neural network contains a lot of numbers, but they are only of two types: 
+1. numbers that are calculated, 
+2. and the parameters that these numbers are calculated from.     
+This gives us the two most important pieces of jargon to learn:
+
+***Activations***.    
+Numbers that are calculated (both by linear and nonlinear layers).    
+
+***Parameters***.    
+Numbers that are randomly initialized, and optimized (that is, the numbers that define the model)
+
+Our activations and parameters are all contained in ***tensors***.     
+These are simply regularly shaped arrays.     
+The number of dimensions of a tensor is its *rank*. There are some special tensors:
+- Rank-0: scalar  
+- Rank-1: vector  
+- Rank-2: matrix
+
+A neural network contains a number of ***layers***. Each layer is either ***linear or nonlinear***.     
+Sometimes a nonlinearity is referred to as an ***activation function***.
+
+***ReLu***: A type of activation function that returns 0 for negative numbers and doesn't change the positive ones.
+
+***Mini-Batch***: A small group of inputs and labels gathered together in two arrays. 
+A gradient descent step is updated in this batch (rather than a whole epoch).
+
+***Forward pass***: Applying a model to some inputs and computing the predictions.
+
+***Loss***: A value that represents how well or badly the model is performing.
+
+***Gradient***: The derivative of the loss with respect to some parameter of the model.
+
+***Backward pass***: Computing the gradient of the loss for all the parameters of the model.
+
+***Gradient Descent***: Taking a step on the opositte direction of the gradient to gradually improve the model's parameters.
+
+***Learning rate***: The size of the step we take when doing SGD to update the model's parameters.
+
+
