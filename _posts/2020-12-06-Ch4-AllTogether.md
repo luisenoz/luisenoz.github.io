@@ -249,12 +249,137 @@ learn.fit(10, lr=lr)
 |3	    |0.069656	  |0.100934	  |0.917076	      |00:00 |
 |4	    |0.038907	  |0.074887	  |0.934249	      |00:00 |
 |5	    |0.026727	  |0.060520	  |0.949460	      |00:00 |
-|6	    |0.021618	  |0.051534	  |0.955839 	    |00:00 |
+|6	    |0.021618	  |0.051534	  |0.955839 	  |00:00 |
 |7	    |0.019278	  |0.045524	  |0.962709	      |00:00 |
 |8	    |0.018049	  |0.041267	  |0.965653	      |00:00 |
 |9	    |0.017285	  |0.038108	  |0.968106	      |00:00 |
 
 With these classes, we can now replace our linear model with a neural network.
 
+## Adding a Nonlinearity
 
+So far, we tried optimising the parameters of a a simple linear function. But a linear classifier is constrained in terms of what it can achieve.    
+To make it more complex, and able to handle more and complex tasks, we need to add some nonlinearity between two linear classifiers; and that will give us a neural network.
+
+The following encapsulates the entire definition of a basic neural network:
+```python
+def simple_net(xb): 
+    res = xb@w1 + b1
+    res = res.max(tensor(0.0))
+    res = res@w2 + b2
+    return res
+```
+All we have in *simple_net* is two linear classifiers with a *max* function between them.     
+*w1 and w2* are weight tensors, and *b1 and b2* are bias tensors. They are the parameters that are initially randomly initialized, 
+just as we did in the previous section:
+```python
+w1 = init_params((28*28,30))
+b1 = init_params(30)
+w2 = init_params((30,1))
+b2 = init_params(1)
+```
+The key point is that *w1* has 30 output activations (which means that *w2* must have 30 input activations, so they match).     
+That means that the first layer can construct 30 different features, each representing a different mix of pixels, *(and we can change that 30 to anything we like, to make the model more or less complex)*.     
+That little function *res.max(tensor(0.0))* is called a *rectified linear unit*, also known as ***ReLU***.     
+It sounds complicated but it just replaces every negative number with a 0.  
+It is also available in PyTorch as *F.relu*:
+```python
+plot_function(F.relu)
+```
+![relu](https://github.com/luisenoz/luisenoz.github.io/blob/master/images/relu.png)
+
+The basic idea is that by using more linear layers, we can have our model do more computation, 
+and therefore model more complex functions.     
+But there’s no point in just putting one linear layout directly after another one, 
+because a series of any number of linear layers in a row can be replaced with a single linear layer with a different set of parameters.     
+But if we put a nonlinear function between them, such as max, this is no longer true. 
+Now each linear layer is somewhat decoupled from the other ones and can do its own useful work.
+
+Amazingly, it can be mathematically proven that this little function can solve any computable problem to an arbitrarily high level of accuracy, if we can find the right parameters for w1 and w2 and if we make these matrices big enough.     
+> Mathematically speaking, any neural network architecture aims at finding any mathematical function y= f(x) that can map attributes(x) to output(y). 
+The accuracy of this function i.e. mapping differs depending on the distribution of the dataset and the architecture of the network employed. 
+The function f(x) can be arbitrarily complex. The **Univeral Approximation Theorem** tells us that Neural Networks has a kind of universality 
+i.e. no matter what f(x) is, there is a network that can approximately approach the result and do the job! This result holds for any number of inputs and outputs.
+
+The three lines of code *(res=)* that we have in the fucntion are known as *layers*:
+- The first and third are known as *linear layers*, 
+- and the second line of code is known variously as a nonlinearity, or *activation function*.
+
+As usual, taking advantage of Pytorch, we can replace that code for something evan simpler:
+```python
+simple_net = nn.Sequential(
+    nn.Linear(28*28,30),
+    nn.ReLU(),
+    nn.Linear(30,1)
+)
+```
+
+- *nn.Sequential* creates a module that will call each of the listed layers or functions in turn.
+- *nn.ReLU* is a PyTorch module that does exactly the same thing as the *F.relu* function.     
+*(Most functions that can appear in a model also have identical forms that are modules, generally, by just replacing F with nn and changing the capitalization)*.    
+When using nn.Sequential, PyTorch requires us to use the module version. 
+Since modules are classes, we have to instantiate them, which is why we used nn.ReLU.
+
+Because nn.Sequential is a module, we can get its parameters, which will return a list of all the parameters of all the modules it contains:
+```python
+learn = Learner(dls, simple_net, opt_func=SGD,
+                loss_func=mnist_loss, metrics=batch_accuracy)
+                
+learn.fit(40, 0.1)
+```
+|epoch	|train_loss	|valid_loss	|batch_accuracy	|time  |   
+|:---|:---|:---|:---|:---|
+|0	|0.333021	|0.396112	|0.512267	|00:00|
+|1	|0.152461	|0.235238	|0.797350	|00:00|
+|2	|0.083573	|0.117471	|0.911678	|00:00|
+|3	|0.054309	|0.078720	|0.940628	|00:00|
+|4	|0.040829	|0.061228	|0.956330	|00:00|
+|..	|........	|........	|........	|.....|
+|..	|........	|........	|........	|.....|
+|35	|0.014686	|0.021184	|0.982336	|00:00|
+|36	|0.014549	|0.021019	|0.982336   |00:00|
+|37	|0.014417	|0.020864	|0.982336	|00:00|
+|38	|0.014290	|0.020716	|0.982336	|00:00|
+|39	|0.014168	|0.020576	|0.982336	|00:00|
+
+The training process is recorded in *learn.recorder*, with the table of output stored in the values attribute, 
+so we can plot the accuracy over training:
+```python
+plt.plot(L(learn.recorder.values).itemgot(2));
+```
+And we can get the final accuracy:
+```python
+learn.recorder.values[-1][2]
+```
+0.982336
+
+At this point, we have reached something that is rather magical:
+- A function that can solve any problem to any level of accuracy (the neural network) given the correct set of parameters.
+- A way to find the best set of parameters for any function (stochastic gradient descent).
+
+### Going deeper
+
+There is no need to stop at just two linear layers. We can add as many as we want, as long as we add a nonlinearity between each pair of linear layers.     
+However, the deeper the model gets, the harder it is to optimize the parameters in practice.     
+If we already know that a single nonlinearity with two linear layers is enough to approximate any function, why would we use deeper models?     
+The reason is performance. With a deeper model (one with more layers), we do not need to use as many parameters; we can use smaller matrices, 
+with more layers, and get better results than we would get with larger matrices and few layers.     
+That means that we can train the model more quickly, and it will take up less memory.
+
+The book shows what happens when we train an 18-layer model using the same approach we saw in Chapter 1:
+```python
+dls = ImageDataLoaders.from_folder(path)
+learn = cnn_learner(dls, resnet18, pretrained=False,
+                    loss_func=F.cross_entropy, metrics=accuracy)
+learn.fit_one_cycle(1, 0.1)
+```
+|epoch	|train_loss	|valid_loss	|batch_accuracy	|time  |   
+|:---|:---|:---|:---|:---|
+|0	|0.078008	|0.024554	|0.995584	|00:15|
+
+Nearly 100% accuracy in less than 15'!
+
+We already have the foundational pieces, but there are just a few little tricks we need to use to get such great results from scratch ourself. 
+*(Of course, even if we know all the tricks, we’ll nearly always want to work with the prebuilt classes provided by PyTorch and fastai, 
+because they'll save us from having to think about all the little details ourself.)*
 
