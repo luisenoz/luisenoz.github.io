@@ -1,4 +1,4 @@
-# Data Ethics
+# CHAPTER 3: DATA ETHICS
 
 In this chapter, the authors and Dr. Rachel Thomas (co-author of fastai) introduced us to a discusiion on data ethics, 
 or the branch of ethics that studies and evaluates moral problems related to data.   
