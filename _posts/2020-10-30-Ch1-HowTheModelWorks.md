@@ -1,4 +1,4 @@
-# How the Image Recognizer Works
+# CHAPTER 1.4: HOW THE IMAGE RECOGNIZER WORKS
 
 The chapter continues by providing a more detailed intro to what each line of the model works. But it also promises full details in later chapters. 
 Therefore, I'm not going to review each line and the descriptions, but only those points or tips that took my attention.
