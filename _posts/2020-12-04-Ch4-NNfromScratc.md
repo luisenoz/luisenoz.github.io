@@ -1,4 +1,4 @@
-# Getting to our first Neural Network from scratch
+# CHAPTER 4.5: GETTING OUR FIRST NEURAL NETWORK FROM SCRATCH
 
 It was kind of magical to follow the steps Jeremy put in the book to lead us in a way from the most elemental steps 
 to reach, almost without noticing until the end, the creation of a simple NN.
