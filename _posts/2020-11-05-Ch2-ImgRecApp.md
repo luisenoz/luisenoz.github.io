@@ -1,4 +1,4 @@
-# Creating my Image Recognition App!
+# CHAPTER 2.2: CREATING MY IMAGE RECOGNITION APP!!!
 
 The project introduced in the book in this chapter is a *bear detector* that discriminates between three types of bear: grizzly, black, and teddy bears.  
 However, and following Jeremy's advise, I'll follow the instructions in the book but based on my own set of images. I'm sure I'll find more than a few obstacles,
