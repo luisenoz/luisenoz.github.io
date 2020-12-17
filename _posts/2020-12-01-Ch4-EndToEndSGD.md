@@ -1,4 +1,4 @@
-# An End to End SGD Example
+# CHAPTER 4.3: AN END TO END SGD EXAMPLE
 
 The book starts the example with a simple, synthetic example model, where we imagine we were measuring the speed of a roller coaster.     
 If we were measuring the speed manually every second for 20 seconds, it might look something like this:
