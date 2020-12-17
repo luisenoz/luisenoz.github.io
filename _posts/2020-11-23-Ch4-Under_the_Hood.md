@@ -1,4 +1,4 @@
-# UNDER THE HOOD: Training a Digit Classifier
+# CHAPTER 4.1: UNDER THE HOOD: TRAINING A DIGIT CLASSIFIER
 
 In the book, the authors used computer vision to introduce fundamental tools and concepts for deep learning, such as:
 - roles of arrays and tensors,
