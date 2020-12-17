@@ -1,4 +1,4 @@
-# CHAPTER 1.1 - The Introduction
+# CHAPTER 1.1 - THE INTRODUCTION
 
 ## Deep Learning is for everyone!!!
 
