@@ -1,4 +1,4 @@
-# Putting it all Together
+# CHAPTER 4.6: PUTTING IT ALL TOGETHER
 
 In code, the process to be implemented is going to be something like this for each epoch:
 
