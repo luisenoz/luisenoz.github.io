@@ -1,4 +1,4 @@
-## NumPy arrays and PyTorch Tensors
+## CHAPTER 4.2: NumPy ARRAYS, PyTorch TENSORS & BROADCASTING
 
 NumPy is the most widely used library for scientific and numeric programming in Python. However, unlike PyTorch tensors, 
 it does not support using the GPU or calculating gradients, which are both critical for deep learning.    
