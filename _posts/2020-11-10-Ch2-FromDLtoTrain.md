@@ -1,4 +1,4 @@
-# From DataLoader to a Trained Model
+# CHAPTER 2.3: FROM DATALOADER TO A TRAINED MODEL
 
 ## From Data to DataLoader
 **DataLoaders** is a <ins>class</ins> that just stores whatever **DataLoader** <ins>objects</ins> we pass to it and makes them available as *train and valid*.  
